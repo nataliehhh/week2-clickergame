@@ -53,6 +53,9 @@ function renderShop() {
                 purchasedItems.push(item);  
             } else {
                 errorMsg.textContent = `${"You don't have enough eggs yet...keep on clucking!!"}`
+                setTimeout(function() {
+                    errorMsg.textContent = " ";
+                }, 5000);
             }
         });
     })}
