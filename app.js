@@ -5,8 +5,6 @@ const shop = document.getElementById("shop");
 const eggsSecondDiv = document.getElementById("eggsSecondDiv");
 const eggsClickDiv = document.getElementById("eggsClickDiv");
 const errorMsg = document.getElementById("errorMsg");
-let totalEPS = 1;
-let totalEPC = 1;
 let eggCount = 0;
 
 const upgrades = [{
@@ -52,14 +50,12 @@ function renderShop() {
         buyBtn.addEventListener("click", function() {
             if (eggCount >= item.price) {
                 eggCount = eggCount - item.price;
-                purchasedItems.push(item);
-                save();   
+                purchasedItems.push(item);  
             } else {
                 errorMsg.textContent = `${"You don't have enough eggs yet...keep on clucking!!"}`
             }
         });
     })}
-
 
 renderShop();
 
@@ -69,49 +65,29 @@ function game() {
         eggCount = eggCount +  eggsPerSecond();
         updateUI();    
         save();
-        console.log(eggCount);
     }, 1000); 
-
 }
-
 
 function eggsPerSecond() {
     let total = 0
     if (purchasedItems.length == 0) {
         return 1}
-    for (let i=0; i <= purchasedItems.length; i++) {
+    for (let i=0; i < purchasedItems.length; i++) {
         console.log(purchasedItems[i])
-    total = total + purchasedItems[i].increase
+        total = total + purchasedItems[i].increase
     }
     return total;
 }
-    
 
-function eggsPerClick() {
-
-}
-
-
-// function addEgg() {
-//     eggCount++;
-// }
+mainEgg.addEventListener("click", function () {
+    eggCount = eggCount + eggsPerSecond();
+});
 
 function updateUI() {
     eggCounter.textContent = eggCount;
     eggsSecondDiv.textContent = `${eggsPerSecond()} Eggs per second`;
-    eggsClickDiv.textContent = `${totalEPC} Eggs per cluck`;
+    eggsClickDiv.textContent = `${eggsPerSecond()} Eggs per cluck`;
 };
-
-mainEgg.addEventListener("click", function () {
-    eggCount = eggCount + 1
-});
-
-function clearCount() {
-    eggCount = 0;
-    localStorage.clear();
-};
-
-clearBtn.addEventListener("click", clearCount);
 
 function save() {
     localStorage.setItem("eggCount", eggCount);
@@ -120,45 +96,23 @@ function save() {
 }
 
 function load() {
-    let storedEggCount = JSON.parse(localStorage.getItem("eggCount"));
-
+    let storedEggCount = JSON.parse(localStorage.getItem("eggCount")) || 0;
     eggCount = storedEggCount;
-    const localPurchasedItems = localStorage.getItem("Purchases");
+    const localPurchasedItems = localStorage.getItem("Purchases") || JSON.stringify(purchasedItems);
     const parsedPurchasedItems = JSON.parse(localPurchasedItems);
     console.log(parsedPurchasedItems, ' from load function');
     purchasedItems = parsedPurchasedItems
 }
 
+function clearCount() {
+    eggCount = 0;
+    const localPurchasedItems = localStorage.getItem("Purchases");
+    const parsedPurchasedItems = JSON.parse(localPurchasedItems);
+    purchasedItems = parsedPurchasedItems;
+    purchasedItems = [];
+    localStorage.clear();
+};
+
+clearBtn.addEventListener("click", clearCount);
+
 game();
-
-
-function reset() {
-    cookies = 0;
-    purchasedItems = []
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// document.addEventListener("DOMContentLoaded", (event) => {
-//     intervalID = setInterval(startCount, 1000);
-// });
